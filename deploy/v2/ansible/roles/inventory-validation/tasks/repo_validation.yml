@@ -1,0 +1,21 @@
+---
+
+- name: Ensure zypper repo is configured on HANA VMs
+  become: yes
+  become_user: root
+  block:
+    - name: Check zypper repo on HANA VMs
+      command: zypper lr
+  rescue:
+    # placeholder for a valid workaround
+    - name: Ensure to re-register SLE instance against the Public Cloud Update Infrastructure servers
+      shell: |
+        export PYTHONWARNINGS="ignore:Unverified HTTPS request"
+        /usr/sbin/registercloudguest --force-new
+      register: reg_result
+      # registercloudguest rc == 1 when successful
+      failed_when: reg_result.rc > 1
+
+- name: Check if zypper repo is configured on HANA VMs
+  command: zypper lr
+
