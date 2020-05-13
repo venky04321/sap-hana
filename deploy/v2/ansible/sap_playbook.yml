@@ -19,7 +19,7 @@
 - hosts: hanadbnodes
   roles:
     - role: inventory-validation
-    when:
+      when:
         - hana_database.size != "LargeInstance"   
 
 # Prepare os, disks and mount points on Hana Database servers
