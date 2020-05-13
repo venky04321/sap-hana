@@ -5,5 +5,3 @@
   block:
     - import_tasks: hostname_validation.yml
     - import_tasks: repo_validation.yml
-      when:
-        - ansible_os_family == 'Suse'
