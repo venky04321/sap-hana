@@ -38,6 +38,8 @@ steps:
       terraform -version
       terraform init
       terraform apply -auto-approve -var-file=../../../templates/tempGen/${{parameters.testCaseName}}.json
+      cd deploy/v2/terraform
+      ls -ltr
     displayName: 'Terraform Deployment'
     env:
       TF_VAR_azure_service_principal_id: $(hana-pipeline-spn-id)
