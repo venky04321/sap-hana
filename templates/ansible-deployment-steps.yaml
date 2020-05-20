@@ -15,13 +15,14 @@ steps:
   - script: |
       ls -ltr
       cd deploy/v2/terraform/default/ansible_config_files
+      ls
       rti_user=$(cat output.json | jq -r '.jumpboxes.linux[] | select(.destroy_after_deploy == "true") | .authentication.username')
       rti_public_ip=$(cat output.json | jq -r '.jumpboxes.linux[] | select(.destroy_after_deploy == "true") | .public_ip_address')
       ssh -i /tmp/sshkey -o StrictHostKeyChecking=no "${rti_user}"@"${rti_public_ip}" '
       ansible-playbook --version
       cd sap-hana
-      git checkout $(System.PullRequest.SourceBranch)
       cd ~
+      ls
       export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
       export ANSIBLE_HOST_KEY_CHECKING=False
       source export-clustering-sp-details.sh
