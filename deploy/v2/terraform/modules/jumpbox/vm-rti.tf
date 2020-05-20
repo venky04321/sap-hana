@@ -139,7 +139,7 @@ resource "null_resource" "prepare-rti" {
 
   # Copies output.json and inventory file for ansbile on RTI.
   provisioner "file" {
-    source      = "${path.root}/../ansible_config_files/"
+    source      = "${terraform.workspace}/ansible_config_files/"
     destination = "/home/${local.rti[0].authentication.username}"
   }
 
