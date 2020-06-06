@@ -9,30 +9,14 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-parameters:
-- name: myStringName
-  type: string
-  default: a string value
-- name: myMultiString
-  type: string
-  default: default
-  values:
-  - default
-  - ubuntu
-- name: myNumber
-  type: number
-  default: 2
-  values:
-  - 1
-  - 2
-  - 4
-  - 8
-  - 16
-- name: myBoolean
-  type: boolean
-  default: true
+
+variables:
+  - name: vnet_mgmt
+    value: "himgmt"
+  - name: vnet_sap
+    value: "hisap"
 
 steps: 
-- ${{ each parameter in parameters }}:
-  - script: echo ${{ parameter.Key }} 
-  - script: echo ${{ parameter.Value }}
+  - ${{ each variable in variables }}:
+    - script: echo ${{ variables.Key }} 
+    - script: echo ${{ variables.Value }}
