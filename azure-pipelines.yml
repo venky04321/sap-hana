@@ -10,13 +10,13 @@ pool:
   vmImage: 'ubuntu-latest'
 
 
-variables:
+parameters:
   - name: vnet_mgmt
-    value: "himgmt"
+    default: "himgmt"
   - name: vnet_sap
-    value: "hisap"
+    default: "hisap"
 
 steps: 
-  - ${{ each variable in variables }}:
+  - ${{ each variable in parameters }}:
     - script: echo ${{ variable.Key }} 
     - script: echo ${{ variable.Value }}
