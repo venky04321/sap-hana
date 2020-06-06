@@ -4,7 +4,7 @@ parameters:
 
 jobs:
 - job: createAllNew_SN_${{parameters.osVersion}}
-  timeoutInMinutes: 180
+  timeoutInMinutes: 120
   variables:
     scenario: sap-allNew-SN
     testcase: $(scenario)-${{parameters.osVersion}}-$(Build.BuildId)
@@ -19,11 +19,8 @@ jobs:
     parameters:
       testCaseName: $(testcase)
       osImage: ${{parameters.osImage}}
-  - template: ansible-deployment-steps.yaml
-    parameters:
-      testCaseName: $(testcase)
 - job: createAllNew_HA_${{parameters.osVersion}}
-  timeoutInMinutes: 180
+  timeoutInMinutes: 120
   variables:
     scenario: sap-allNew-HA
     testcase: $(scenario)-${{parameters.osVersion}}-$(Build.BuildId)
