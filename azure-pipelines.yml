@@ -18,5 +18,5 @@ variables:
 
 steps: 
   - ${{ each variable in variables }}:
-    - script: echo ${{ variables.Key }} 
-    - script: echo ${{ variables.Value }}
+    - script: echo ${{ variable.Key }} 
+    - script: echo ${{ variable.Value }}
