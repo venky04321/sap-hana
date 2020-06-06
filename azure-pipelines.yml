@@ -1,0 +1,38 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+parameters:
+- name: myStringName
+  type: string
+  default: a string value
+- name: myMultiString
+  type: string
+  default: default
+  values:
+  - default
+  - ubuntu
+- name: myNumber
+  type: number
+  default: 2
+  values:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+- name: myBoolean
+  type: boolean
+  default: true
+
+steps: 
+- ${{ each parameter in parameters }}:
+  - script: echo ${{ parameter.Key }} 
+  - script: echo ${{ parameter.Value }}
