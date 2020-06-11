@@ -51,18 +51,18 @@ stages:
       osImage: '\"offer\": \"sles-sap-12-sp5\", 
                 \"publisher\": \"SUSE\", 
                 \"sku\": \"gen1\"'
-  # - template: templates/job-template-per-os.yaml
-  #   parameters:
-  #     osVersion: "RHEL7"
-  #     osImage: '\"offer\": \"RHEL-SAP-HA\", 
-  #               \"publisher\": \"RedHat\", 
-  #               \"sku\": \"7.6\"'
-  # - template: templates/job-template-per-os.yaml
-  #   parameters:
-  #     osVersion: "SLES12"
-  #     osImage: '\"offer\": \"sles-sap-12-sp5\", 
-  #               \"publisher\": \"SUSE\", 
-  #               \"sku\": \"gen1\"'
+  - template: templates/job-template-per-os.yaml
+    parameters:
+      osVersion: "RHEL7"
+      osImage: '\"offer\": \"RHEL-SAP-HA\", 
+                \"publisher\": \"RedHat\", 
+                \"sku\": \"7.6\"'
+  - template: templates/job-template-per-os.yaml
+    parameters:
+      osVersion: "SLES12"
+      osImage: '\"offer\": \"sles-sap-12-sp5\", 
+                \"publisher\": \"SUSE\", 
+                \"sku\": \"gen1\"'
 #####################################################################
 # This stage destroy resources created from all above test cases.   #
 # It will be triggered after stage CreatingResources is finished.   #
@@ -75,7 +75,7 @@ stages:
   dependsOn: CreatingResources
   condition: or(succeededOrFailed(), always())
   jobs:
-  - job: cleanUp
+  - job: cleanUpResources
     steps:
       - script: |
           az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
@@ -87,11 +87,10 @@ stages:
             sap-allNew-SN
             sap-allNew-HA
             sap-reuseRG-SN
+            sap-reuseVNET-SN-VNET
+            sap-reuseNSG-SN-NSG
             sap-reuseVNET-SN
             sap-reuseNSG-SN
-            Prepare-sap-reuseVNET-SN
-            Prepare-sap-reuseNSG-SN
-            Prepare-sap-reuseRG-SN
           )
           for scenario in "${scenario_list[@]}"
           do
@@ -105,10 +104,13 @@ stages:
             echo $rg
             if $(az group exists -n $rg); then
               az group update --resource-group $rg --set tags.Delete=True
+              az network vnet subnet update -n subnet-mgmt --vnet-name vnet-mgmt -g $rg --network-security-group ""
+              az network vnet subnet update -n subnet-admin --vnet-name vnet-sap -g $rg --network-security-group ""
+              az network vnet subnet update -n subnet-db --vnet-name vnet-sap -g $rg --network-security-group ""
               az group delete -n $rg --no-wait -y
             fi
           done
-        displayName: 'Clean up'
+        displayName: 'Clean up Resources'
         env:
           TF_VAR_azure_service_principal_id: $(hana-pipeline-spn-id)
           TF_VAR_azure_service_principal_pw: $(hana-pipeline-spn-pw)

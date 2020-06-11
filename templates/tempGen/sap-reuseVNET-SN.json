@@ -10,7 +10,7 @@
                                 "is_existing": "true",
                                 "arm_id": "vnet-mgmt-arm-id",
                                 "subnet_mgmt": {
-                                        "name": "subnet-mgmt-new",
+                                        "name": "subnet-mgmt",
                                         "prefix": "10.0.2.0/24"
                                 }
                         },

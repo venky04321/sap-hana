@@ -2,8 +2,7 @@
         "infrastructure": {
                 "resource_group": {
                         "is_existing": "false",
-                        "name": "var-rg-name",
-                        "arm_id": "rg-arm-id"
+                        "name": "var-rg-name"
                 },
                 "vnets": {
                         "management": {
