@@ -1,7 +1,3 @@
-output "vm" {
-  value = local.deployers
-}
-
 // Public IP addresse and nic for Deployer
 resource "azurerm_public_ip" "deployer" {
   count               = length(local.deployers)
