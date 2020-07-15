@@ -71,8 +71,10 @@ resource "azurerm_storage_account" "tfstate" {
   account_replication_type  = "LRS"
   account_tier              = "Standard"
   enable_https_traffic_only = local.enable_secure_transfer
-  delete_retention_policy {
-    days = 7
+  blob_properties {
+    delete_retention_policy {
+      days = 7
+    }
   }
 }
 
