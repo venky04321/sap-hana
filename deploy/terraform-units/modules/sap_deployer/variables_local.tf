@@ -1,3 +1,9 @@
+/*
+Description:
+
+  Define local variables.
+*/
+
 // Set defaults
 locals {
 

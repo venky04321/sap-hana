@@ -1,4 +1,10 @@
-// Random 8 char identifier for sap deployer
+/*
+Description:
+
+  Define infrastructure resources for deployer(s).
+*/
+
+// Random 8 char identifier for each sap deployer
 resource "random_id" "deployer" {
   byte_length = 4
 }
@@ -57,7 +63,7 @@ resource "azurerm_storage_account" "deployer" {
   enable_https_traffic_only = local.enable_secure_transfer
 }
 
-// Creates storage account for remote state files
+// Creates storage account with container for remote state files, soft deletion enabled
 resource "azurerm_storage_account" "tfstate" {
   name                      = "sapdeployer${local.postfix}"
   resource_group_name       = azurerm_resource_group.deployer.name
@@ -65,5 +71,14 @@ resource "azurerm_storage_account" "tfstate" {
   account_replication_type  = "LRS"
   account_tier              = "Standard"
   enable_https_traffic_only = local.enable_secure_transfer
+  delete_retention_policy {
+    days = 7
+  }
+}
+
+resource "azurerm_storage_container" "container" {
+  name                  = "tfstate"
+  storage_account_name  = azurerm_storage_account.tfstate.name
+  container_access_type = "private"
 }
 

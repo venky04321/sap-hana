@@ -1,3 +1,9 @@
+/*
+Description:
+
+  Define 1..n Deployer(s).
+*/
+
 // Public IP addresse and nic for Deployer
 resource "azurerm_public_ip" "deployer" {
   count               = length(local.deployers)

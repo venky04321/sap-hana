@@ -1,3 +1,9 @@
+/*
+Description:
+
+  Define NSG for management vnet where deployer(s) resides.
+*/
+
 // Create/Import management nsg
 resource "azurerm_network_security_group" "nsg-mgmt" {
   count               = local.sub_mgmt_nsg_exists ? 0 : 1
