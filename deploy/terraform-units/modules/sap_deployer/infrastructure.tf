@@ -4,7 +4,7 @@ Description:
   Define infrastructure resources for deployer(s).
 */
 
-// Random 8 char identifier for each sap deployer
+// Random 8 char identifier for sap deployer resources
 resource "random_id" "deployer" {
   byte_length = 4
 }
