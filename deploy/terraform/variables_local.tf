@@ -19,6 +19,8 @@ locals {
     for db in var.databases : db
     if try(db.platform, "NONE") == "HANA"
   ]
+  # TODO - Bad Default Value; 
+  # - DEFAULT = HDB
   hana-sid = try(local.hdb_list[0].instance.sid, "")
 
   # Options

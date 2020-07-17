@@ -79,7 +79,11 @@ locals {
   })
   hdb_ins = try(local.hdb.instance, {})
   # HANA database sid from the Databases array for use as reference to LB/AS
+  # TODO - Bad Default Value; 
+  # - DEFAULT = HDB
   hdb_sid                = try(local.hdb_ins.sid, "HN1")
+  # TODO - Bad Default Value; 
+  # - DEFAULT = 00
   hdb_nr                 = try(local.hdb_ins.instance_number, "01")
   hdb_cred               = try(local.hdb.credentials, {})
   db_systemdb_password   = try(local.hdb_cred.db_systemdb_password, "")

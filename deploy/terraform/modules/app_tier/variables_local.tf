@@ -25,7 +25,11 @@ locals {
   var_sub_app    = try(var.infrastructure.vnets.sap.subnet_app, {})
   sub_app_exists = try(local.var_sub_app.is_existing, false)
   sub_app_arm_id = local.sub_app_exists ? try(local.var_sub_app.arm_id, "") : ""
+  # TODO - Bad Default Value; 
+  # - Naming Standard: {ENVIRONMENT}-{REGION_MAP}_{CODENAME}-{SID}_app-subnet
   sub_app_name   = local.sub_app_exists ? "" : try(local.var_sub_app.name, "subnet-app")
+  # TODO - Bad Default Value; 
+  # - NO DEFAULT; Required value until IPAM capabilities added
   sub_app_prefix = local.sub_app_exists ? "" : try(local.var_sub_app.prefix, "10.1.4.0/24")
 
   # APP NSG
@@ -34,12 +38,22 @@ locals {
   sub_app_nsg_arm_id = local.sub_app_nsg_exists ? try(local.var_sub_app_nsg.arm_id, "") : ""
   sub_app_nsg_name   = local.sub_app_nsg_exists ? "" : try(local.var_sub_app_nsg.name, "nsg-app")
 
+  # TODO - Bad Default Value; 
+  # - NO DEFAULT; Required value
   application_sid          = try(var.application.sid, "HN1")
   enable_deployment        = try(var.application.enable_deployment, false)
+  # TODO - Bad Default Value; 
+  # - DEFAULT = 00
   scs_instance_number      = try(var.application.scs_instance_number, "01")
+  # TODO - Bad Default Value; 
+  # - DEFAULT = 10
   ers_instance_number      = try(var.application.ers_instance_number, "02")
   scs_high_availability    = try(var.application.scs_high_availability, false)
+  # TODO - Bad Default Value; 
+  # - DEFAULT = 1
   application_server_count = try(var.application.application_server_count, 0)
+  # TODO - Change parameter 
+  # - webdispatcher_count --> webdisp_server_count
   webdispatcher_count      = try(var.application.webdispatcher_count, 0)
   vm_sizing                = try(var.application.vm_sizing, "Default")
   app_nic_ips              = try(var.application.app_nic_ips, [])
