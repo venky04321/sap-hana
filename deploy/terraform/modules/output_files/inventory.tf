@@ -59,6 +59,27 @@ resource "local_file" "output-json" {
       }
       if database != {}
     ],
+        "anydatabases" = [for database in local.anydatabases : {
+      platform          = database.platform,
+      db_version        = database.db_version,
+      os                = database.os,
+      size              = database.size,
+      filesystem        = database.filesystem,
+      high_availability = database.high_availability,
+      authentication    = database.authentication,
+      credentials       = database.credentials,
+      nodes = [for ip-anydbnode in local.ips-anydbnodes : {
+        dbname       = local.anydb_vms[index(local.ips-anydbnodes, ip-anydbnode)].name
+        ip_db_nic    = local.ips-anydbnodes[index(local.ips-anydbnodes, ip-anydbnode)],
+        role         = local.anydb_vms[index(local.ips-anydbnodes, ip-anydbnode)].role
+        } if upper(local.anydb_vms[index(local.ips-anydbnodes, ip-anydbnode)].platform) == upper(database.platform)
+      ],
+      loadbalancer = {
+        frontend_ip = var.anydb-loadbalancers[0].private_ip_address
+      }
+      }
+      if database != {}
+    ],
     "software" = merge(var.software_w_defaults, {
       storage_account_sapbits = {
         name                = var.storage-sapbits[0].name,
@@ -89,6 +110,8 @@ resource "local_file" "ansible-inventory" {
     ips-scs               = local.ips-scs,
     ips-app               = local.ips-app,
     ips-web               = local.ips-web
+    anydbnodes            = local.anydb_vms,
+    ips-anydbnodes        = local.ips-anydbnodes
     }
   )
   filename = "${terraform.workspace}/ansible_config_files/hosts"
@@ -110,6 +133,8 @@ resource "local_file" "ansible-inventory-yml" {
     ips-scs               = local.ips-scs,
     ips-app               = local.ips-app,
     ips-web               = local.ips-web
+    anydbnodes            = local.anydb_vms,
+    ips-anydbnodes        = local.ips-anydbnodes
     }
   )
   filename = "${terraform.workspace}/ansible_config_files/hosts.yml"

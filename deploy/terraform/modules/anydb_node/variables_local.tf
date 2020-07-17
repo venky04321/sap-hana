@@ -117,7 +117,9 @@ locals {
     { os = merge({ os_type = local.anydb_ostype }, local.anydb_os) },
     { filesystem = local.anydb_fs },
     { high_availability = local.anydb_ha },
-    { authentication = local.authentication }
+    { authentication = local.authentication },
+    { dbnodes = local.dbnodes },
+    { loadbalancer = local.loadbalancer }
   )
 
   dbnodes = [for idx, dbnode in try(local.anydb.dbnodes, []) : {
