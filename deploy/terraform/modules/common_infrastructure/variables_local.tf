@@ -99,6 +99,15 @@ locals {
   sub_mgmt_nsg_allowed_ips = local.sub_mgmt_nsg_exists ? [] : try(local.var_sub_mgmt_nsg.allowed_ips, [])
 
   # SAP vnet
+  # Only deploy SAP vnet and subnet when application or database deployment is enabled
+  hdb_list = [
+    for db in var.databases : db
+    if try(db.platform, "NONE") == "HANA"
+  ]
+  enable_database_deployment = (length(local.hdb_list) > 0) ? true : false
+  enable_app_deployment      = try(var.application.enable_deployment, false)
+  enable_sap_vnet            = (local.enable_app_deployment || local.enable_database_deployment)
+
   var_vnet_sap    = try(local.var_infra.vnets.sap, {})
   vnet_sap_exists = try(local.var_vnet_sap.is_existing, false)
   vnet_sap_arm_id = local.vnet_sap_exists ? try(local.var_vnet_sap.arm_id, "") : ""
