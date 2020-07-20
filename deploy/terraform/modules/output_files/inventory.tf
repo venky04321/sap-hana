@@ -59,7 +59,7 @@ resource "local_file" "output-json" {
       }
       if database != {}
     ],
-        "anydatabases" = [for database in local.anydatabases : {
+    "anydatabases" = [for database in local.anydatabases : {
       platform          = database.platform,
       db_version        = database.db_version,
       os                = database.os,
@@ -69,7 +69,8 @@ resource "local_file" "output-json" {
       authentication    = database.authentication,
       credentials       = database.credentials,
       nodes = [for ip-anydbnode in local.ips-anydbnodes : {
-        dbname       = local.anydb_vms[index(local.ips-anydbnodes, ip-anydbnode)].name
+        # Check for maximum length and for "_"
+        dbname       = substr(replace(local.anydb_vms[index(local.ips-anydbnodes, ip-anydbnode)].name,"_",""),0,13)
         ip_db_nic    = local.ips-anydbnodes[index(local.ips-anydbnodes, ip-anydbnode)],
         role         = local.anydb_vms[index(local.ips-anydbnodes, ip-anydbnode)].role
         } if upper(local.anydb_vms[index(local.ips-anydbnodes, ip-anydbnode)].platform) == upper(database.platform)
