@@ -67,6 +67,9 @@ locals {
       "password" = "Sap@hana2019!"
   })
 
+  anydb_cred           = try(local.anydb.credentials, {})
+  db_systemdb_password = try(local.anydb_cred.db_systemdb_password, "")
+
   # Default values in case not provided
   os_defaults = {
     ORACLE = {
@@ -118,6 +121,9 @@ locals {
     { filesystem = local.anydb_fs },
     { high_availability = local.anydb_ha },
     { authentication = local.authentication },
+    { credentials = {
+      db_systemdb_password   = local.db_systemdb_password,
+    }
     { dbnodes = local.dbnodes },
     { loadbalancer = local.loadbalancer }
   )

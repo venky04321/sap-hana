@@ -71,7 +71,6 @@ variable "nics-anydb" {
   description = "List of NICs for the Web dispatcher VMs"
 }
 
-
 variable "anydb-loadbalancers" {
   description = "List of LoadBalancers created for HANA Databases"
 }
@@ -118,7 +117,6 @@ locals {
   ips-app = [for key, value in var.nics-app : value.private_ip_address]
   ips-web = [for key, value in var.nics-web : value.private_ip_address]
 
-  
   ips-anydbnodes = [for key, value in var.nics-anydb : value.private_ip_address]
   anydatabases = [
     var.any-database-info
@@ -145,6 +143,5 @@ locals {
       ]
     ])
     if adatabase != {}
-
   ])
 }
