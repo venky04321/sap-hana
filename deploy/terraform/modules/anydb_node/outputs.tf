@@ -7,5 +7,5 @@ output "any-database-info" {
 }
 
 output "anydb-loadbalancers" {
-   value = azurerm_lb.anydb
+  value = azurerm_lb.anydb
 }

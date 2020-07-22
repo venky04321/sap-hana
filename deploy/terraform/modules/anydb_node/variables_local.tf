@@ -122,8 +122,9 @@ locals {
     { high_availability = local.anydb_ha },
     { authentication = local.authentication },
     { credentials = {
-      db_systemdb_password   = local.db_systemdb_password,
-    }
+      db_systemdb_password = local.db_systemdb_password
+      }
+    },
     { dbnodes = local.dbnodes },
     { loadbalancer = local.loadbalancer }
   )
