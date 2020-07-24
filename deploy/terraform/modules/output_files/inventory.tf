@@ -97,7 +97,9 @@ resource "local_file" "output-json" {
     "options" = var.options
     }
   )
-  filename = "${terraform.workspace}/ansible_config_files/output.json"
+  filename             = "${terraform.workspace}/ansible_config_files/output.json"
+  file_permission      = "0660"
+  directory_permission = "0770"
 }
 
 # Generates the Ansible Inventory file
@@ -120,7 +122,9 @@ resource "local_file" "ansible-inventory" {
     ips-anydbnodes        = local.ips-anydbnodes
     }
   )
-  filename = "${terraform.workspace}/ansible_config_files/hosts"
+  filename             = "${terraform.workspace}/ansible_config_files/hosts"
+  file_permission      = "0660"
+  directory_permission = "0770"
 }
 
 # Generates the Ansible Inventory file
@@ -143,5 +147,7 @@ resource "local_file" "ansible-inventory-yml" {
     ips-anydbnodes        = local.ips-anydbnodes
     }
   )
-  filename = "${terraform.workspace}/ansible_config_files/hosts.yml"
+  filename             = "${terraform.workspace}/ansible_config_files/hosts.yml"
+  file_permission      = "0660"
+  directory_permission = "0770"
 }
