@@ -51,9 +51,9 @@ resource azurerm_linux_virtual_machine "dbserver" {
     }
   }
 
-  computer_name                   = lower(format("%sxdbl%02d", upper(local.anydb_sid), count.index))
+  computer_name                   = substr(lower(local.anydb_vms[count.index].name), 0, 13)
   admin_username                  = local.authentication.username
-  admin_password                  = local.authentication.type == "password" ? try(local.authentication.password,null) : null
+  admin_password                  = local.authentication.type == "password" ? try(local.authentication.password, null) : null
   disable_password_authentication = local.authentication.type != "password" ? true : false
 
   admin_ssh_key {
@@ -104,9 +104,9 @@ resource azurerm_windows_virtual_machine "dbserver" {
     }
   }
 
-  computer_name  = lower(format("%sxdbw%02d", upper(local.anydb_sid), count.index))
+  computer_name  = substr(lower(local.anydb_vms[count.index].name), 0, 13)
   admin_username = local.authentication.username
-  admin_password = try(local.authentication.password,null)
+  admin_password = try(local.authentication.password, null)
 
   boot_diagnostics {
     storage_account_uri = var.storage-bootdiag.primary_blob_endpoint
