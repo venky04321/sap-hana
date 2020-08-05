@@ -1,0 +1,67 @@
+trigger: none
+pr:
+  branches:
+    include:
+    - feature/*
+  paths:
+    include:
+    - deploy/terraform/bootstrap/sap_deployer
+    - deploy/terraform/run/sap_deployer
+    - deploy/terraform/terraform-units/modules/sap_deployer
+variables:
+  - group: azure-config-variables
+  - group: azure-sap-hana-pipeline-secrets
+  - template: templates/variables.yaml
+stages:
+- stage:
+  pool:
+    vmImage: "ubuntu-18.04"
+  jobs:
+  - job: createDeployer
+    steps:
+      - script: |
+          mkdir -p ~/.ssh
+          echo -e "$(hana-pipeline-rsa)" > ~/.ssh/id_rsa
+          echo -e "$(hana-pipeline-rsa-pub)" > ~/.ssh/id_rsa.pub
+          git checkout $(sourceBranchName)
+          agent_ip=$(curl -s https://ipinfo.io/json | jq -r .ip)
+          cd deploy/terraform/bootstrap/sap_deployer
+          cat deployer.json | jq --arg allowed_ip "$agent_ip" '.infrastructure += {
+            vnets: {
+              management: {
+                subnet_mgmt: {
+                  nsg: {
+                    allowed_ips: ["67.160.0.0/16", $allowed_ip]
+                    }
+                  }
+                }
+              }
+            }' > updated_deployer.json
+        displayName: "Pre deployment"
+      - script: |
+          cd deploy/terraform/bootstrap/sap_deployer
+          terraform -version
+          terraform init
+          terraform apply -auto-approve -var-file=updated_deployer.json
+        displayName: "Deploy new deployer"
+        env:
+          ARM_CLIENT_ID: $(hana-pipeline-spn-id)
+          ARM_CLIENT_SECRET: $(hana-pipeline-spn-pw)
+          ARM_TENANT_ID: $(landscape-tenant)
+          ARM_SUBSCRIPTION_ID: $(landscape-subscription)
+      - script: |
+          deployer_rg=$(cat deploy/terraform/bootstrap/sap_deployer/deployer.terraform.tfstate | jq -r .outputs.deployer_uai.value.resource_group_name)
+          az login --service-principal --user $(hana-pipeline-spn-id) --password $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
+          az group update --resource-group $deployer_rg --set tags.Delete=True
+          az lock delete --name resource-group-level --resource-group $deployer_rg
+        displayName: "Pre destroy"
+      - script: |
+          cd deploy/terraform/bootstrap/sap_deployer
+          terraform destroy -auto-approve -var-file=updated_deployer.json
+          exit 0
+        displayName: "Destroy new deployer"
+        env:
+          ARM_CLIENT_ID: $(hana-pipeline-spn-id)
+          ARM_CLIENT_SECRET: $(hana-pipeline-spn-pw)
+          ARM_TENANT_ID: $(landscape-tenant)
+          ARM_SUBSCRIPTION_ID: $(landscape-subscription)
