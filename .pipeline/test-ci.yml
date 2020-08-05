@@ -1,0 +1,11 @@
+trigger:
+  branches:
+    includes:
+    - nancyc-master
+stages:
+- stage:
+  jobs:
+  - job:
+    steps:
+    - script: |
+        echo "hello ci"
