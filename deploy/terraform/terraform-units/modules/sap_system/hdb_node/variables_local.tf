@@ -214,7 +214,7 @@ locals {
 
   // Numerically indexed Hash of HANA DB nodes to be created
   hdb_vms = [
-    for dbnode in local.hana_database.dbnodes : {
+    for dbnode in local.dbnodes : {
       platform       = local.hana_database.platform,
       name           = dbnode.name
       admin_nic_ip   = dbnode.admin_nic_ip
