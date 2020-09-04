@@ -156,18 +156,19 @@ locals {
 
   customer_provided_names = try(local.hdb.dbnodes[0].name, "") == "" ? false : true
 
-  dbnodes = flatten([[for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-    "name" = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr(var.random-id.hex, 0, 3)))
-    "role" = try(dbnode.role, "worker")
-    }
+  dbnodes = flatten([
+    [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
+      "name" = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr(var.random-id.hex, 0, 3))),
+      "role" = try(dbnode.role, "worker")
+      }
     ],
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-      "name" = try("${dbnode.name}-1", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 1, substr(var.random-id.hex, 0, 3)))
+      "name" = try("${dbnode.name}-1", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 1, substr(var.random-id.hex, 0, 3))),
       "role" = try(dbnode.role, "worker")
-      } if local.hdb_ha
+      }
+      if local.hdb_ha
     ]
-    ]
-  )
+  ])
 
   loadbalancer = try(local.hdb.loadbalancer, {})
 
@@ -209,18 +210,18 @@ locals {
 
   // Numerically indexed Hash of HANA DB nodes to be created
   hdb_vms = [
-    for idx, dbnode in local.hana_database.dbnodes : {
-      platform       = local.hdb_platform,
+    for dbnode in local.hana_database.dbnodes : {
+      platform       = local.hana_database.platform,
       name           = dbnode.name
       admin_nic_ip   = try(lookup(dbnode, "admin_nic_ips", [false, false])[idx], false),
       db_nic_ip      = try(lookup(dbnode, "db_nic_ips", [false, false])[idx], false),
-      size           = local.hdb_size,
-      os             = local.hdb_os,
-      authentication = local.hdb_auth
-      sid            = local.hdb_sid
+      size           = local.hana_database.size,
+      os             = local.hana_database.os,
+      authentication = local.hana_database.authentication
+      sid            = local.hana_database.instance.sid
     }
   ]
-  
+
   // Ports used for specific HANA Versions
   lb_ports = {
     "1" = [
