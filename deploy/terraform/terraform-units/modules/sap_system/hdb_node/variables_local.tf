@@ -158,17 +158,13 @@ locals {
 
   dbnodes = flatten([
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-      "name"         = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr(var.random-id.hex, 0, 3))),
-      "role"         = try(dbnode.role, "worker"),
-      "admin_nic_ip" = lookup(dbnode, "admin_nic_ips", [false, false])[0],
-      "db_nic_ip"    = lookup(dbnode, "db_nic_ips", [false, false])[0]
+      "name" = try("${dbnode.name}-0", format("%sd%s%02dl%d", lower(local.sap_sid), lower(local.hdb_sid), idx, idx)),
+      "role" = try(dbnode.role, "worker")
       }
     ],
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-      "name"         = try("${dbnode.name}-1", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 1, substr(var.random-id.hex, 0, 3))),
-      "role"         = try(dbnode.role, "worker"),
-      "admin_nic_ip" = lookup(dbnode, "admin_nic_ips", [false, false])[1],
-      "db_nic_ip"    = lookup(dbnode, "db_nic_ips", [false, false])[1]
+      "name" = try("${dbnode.name}-1", format("%sd%s%02dl%d", lower(local.sap_sid), lower(local.hdb_sid), idx + length(local.hdb.dbnodes), idx + length(local.hdb.dbnodes))),
+      "role" = try(dbnode.role, "worker")
       }
       if local.hdb_ha
     ]
@@ -202,7 +198,7 @@ locals {
     { components = local.components },
     { xsa = local.xsa },
     { shine = local.shine },
-    { dbnodes1 = local.dbnodes },
+    { dbnodes = local.dbnodes },
     { loadbalancer = local.loadbalancer }
   )
 
@@ -214,11 +210,11 @@ locals {
 
   // Numerically indexed Hash of HANA DB nodes to be created
   hdb_vms = [
-    for dbnode in local.hana_database.dbnodes1 : {
+    for dbnode in local.hana_database.dbnodes : {
       platform       = local.hana_database.platform,
       name           = dbnode.name
-      admin_nic_ip   = dbnode.admin_nic_ip
-      db_nic_ip      = dbnode.db_nic_ip
+      admin_nic_ip   = lookup(dbnode, "admin_nic_ips", [false, false])[0],
+      db_nic_ip      = lookup(dbnode, "db_nic_ips", [false, false])[0],
       size           = local.hana_database.size,
       os             = local.hana_database.os,
       authentication = local.hana_database.authentication
