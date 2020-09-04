@@ -156,7 +156,7 @@ locals {
 
   customer_provided_names = try(local.hdb.dbnodes[0].name, "") == "" ? false : true
 
-  dbnodes = concat([
+  dbnodes = flatten([
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
       "name"         = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr(var.random-id.hex, 0, 3))),
       "role"         = try(dbnode.role, "worker"),
@@ -202,7 +202,7 @@ locals {
     { components = local.components },
     { xsa = local.xsa },
     { shine = local.shine },
-    { dbnodes = local.dbnodes },
+    { dbnodes1 = local.dbnodes },
     { loadbalancer = local.loadbalancer }
   )
 
@@ -214,7 +214,7 @@ locals {
 
   // Numerically indexed Hash of HANA DB nodes to be created
   hdb_vms = [
-    for dbnode in local.hana_database.dbnodes : {
+    for dbnode in local.hana_database.dbnodes1 : {
       platform       = local.hana_database.platform,
       name           = dbnode.name
       admin_nic_ip   = dbnode.admin_nic_ip
