@@ -156,7 +156,7 @@ locals {
 
   customer_provided_names = try(local.hdb.dbnodes[0].name, "") == "" ? false : true
 
-  dbnodes = flatten([
+  dbnodes = concat([
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
       "name"         = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr(var.random-id.hex, 0, 3))),
       "role"         = try(dbnode.role, "worker"),
