@@ -156,14 +156,16 @@ locals {
 
   customer_provided_names = try(local.hdb.dbnodes[0].name, "") == "" ? false : true
 
+  random = var.random-id.hex
+
   dbnodes = flatten([
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-      "name" = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr("aaa", 0, 3))),
+      "name" = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr(local.random, 0, 3))),
       "role" = try(dbnode.role, "worker")
       }
     ],
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-      "name" = try("${dbnode.name}-1", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 1, substr("aaa", 0, 3))),
+      "name" = try("${dbnode.name}-1", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 1, substr(local.random, 0, 3))),
       "role" = try(dbnode.role, "worker")
       }
       if local.hdb_ha
