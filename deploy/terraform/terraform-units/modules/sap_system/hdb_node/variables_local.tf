@@ -158,12 +158,12 @@ locals {
 
   dbnodes = flatten([
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-      "name" = try("${dbnode.name}-0", format("%sd%s%02dl%d", lower(local.sap_sid), lower(local.hdb_sid), idx, idx)),
+      "name" = try("${dbnode.name}-0", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 0, substr(var.random-id.hex, 0, 3))),
       "role" = try(dbnode.role, "worker")
       }
     ],
     [for idx, dbnode in try(local.hdb.dbnodes, [{}]) : {
-      "name" = try("${dbnode.name}-1", format("%sd%s%02dl%d", lower(local.sap_sid), lower(local.hdb_sid), idx + length(local.hdb.dbnodes), idx + length(local.hdb.dbnodes))),
+      "name" = try("${dbnode.name}-1", format("%sd%s%02dl%d%s", lower(local.sap_sid), lower(local.hdb_sid), idx, 1, substr(var.random-id.hex, 0, 3))),
       "role" = try(dbnode.role, "worker")
       }
       if local.hdb_ha
