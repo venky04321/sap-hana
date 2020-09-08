@@ -1,6 +1,7 @@
 ### <img src="documentation/assets/UnicornSAPBlack256x256.png" width="64px"> SAP Automation <!-- omit in toc -->
 # Automated SAP Deployments in Azure Cloud <!-- omit in toc -->
-Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_apis/build/status/Azure.sap-hana.v2?branchName=master)](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_build/latest?definitionId=6&branchName=master)
+
+Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_apis/build/status/Azure.sap-hana?branchName=master&api-version=5.1-preview.1)](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_build/latest?definitionId=6&branchName=master)
 
 This repository contains code that can be used to automatically deploy SAP landscapes in the Azure Cloud.
 
@@ -25,6 +26,19 @@ which run different roles to configure and VMs and install SAP HANA and required
 ## Usage
 
 A typical deployment lifecycle will require the following steps:
+
+Step 1) [**Bootstrap the Deployment Platform**](/documentation/deployment-platform-bootstrap.md) (this has to be done only once)
+
+Step 2) [Deploy SAP Library]()
+
+Step 3) [Deploy SAP Workload VNET]()
+
+Step 4) [Deploy SDU]()
+
+Step 1) [**Preparing your environment**](/documentation/getting-started.md#preparing-your-environment) (this has to be done only once)
+
+Step 2) [**Select Terraform Deployment Unit**](#terraform-deployment-units)
+
 
 Step 1) [**Preparing your environment**](/documentation/getting-started.md#preparing-your-environment) (this has to be done only once)
 
