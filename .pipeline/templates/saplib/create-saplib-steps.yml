@@ -38,6 +38,8 @@ steps:
       cp ${repo_dir}/deploy/terraform/bootstrap/sap_library/saplibrary.json ${ws_dir}/saplibrary.json
       cat ${ws_dir}/saplibrary.json \
       | jq --arg environment "${saplib_prefix}" .infrastructure.environment\ =\ \$environment \
+      | jq --arg deployer_rg_name "UNIT-EAUS-MGMT-INFRASTRUCTURE" .infrastructure.deployer.resource_group.name\ =\ \$deployer_rg_name \
+      | jq --arg msi_name "UNIT-EAUS-MGMT-msi" .infrastructure.deployer.msi.name\ =\ \$msi_name \
       > ${input}
 
       cat ${input}
