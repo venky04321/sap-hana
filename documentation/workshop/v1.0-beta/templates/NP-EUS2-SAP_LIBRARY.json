@@ -1,6 +1,6 @@
 {
   "infrastructure": {
-      "landscape": "NP",
-      "region": "eastus2"
+    "environment"                         : "NP",
+    "region"                              : "eastus2"
   }
 }
