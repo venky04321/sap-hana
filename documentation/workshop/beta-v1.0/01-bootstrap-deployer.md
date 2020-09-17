@@ -11,7 +11,7 @@ Duration of Task: `12 minutes`
 from the portal, open the cloud shell.
 
 1. ensure that you are authenticated fro the correct subscription
-    ```
+    ```bash
     az login
     az account list --output=table | grep -i true
     ```
