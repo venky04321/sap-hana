@@ -10,6 +10,7 @@ steps:
       deployer_env=${{parameters.deployer_env}}
       buildId=$(Build.BuildId)
       deployer_isRelease=${deployer_env%%$buildId*}
+
       if [ -z "${deployer_isRelease}" ]
       then 
         deployer_prefix="U$(echo $(Build.BuildId) | rev | cut -c1-4 | rev)"
@@ -35,7 +36,7 @@ steps:
       sapsystem_env=${{parameters.sapsystem_env}}
       sapsystem_isRelease=${sapsystem_env%%$buildId*}
 
-      [[ ${osImage_publisher} == "SUSE" ]] && isSles=true || isSles=false
+      [[ ${{parameters.osImage_publisher}} == "RedHat" ]] && isSles=false || isSles=true
       
       # subnet is decided by buildId if it is unit test.
       # Otherwise, use 10.10.0.0 for sles and 10.10.1.0 for rhel
