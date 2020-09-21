@@ -19,7 +19,6 @@ git clone https://github.com/Azure/sap-hana.git
 cd ~/Azure_SAP_Automated_Deployment/sap-hana
 git checkout beta/v1.0
 git rev-parse HEAD
-#bbee62ac4fc6a36a34d9de1981b4174d783de6b6
 # 20200915-0934   58676615fcf5678a187d599629a9c7c6b121a966
 
 mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE; cd $_
@@ -73,10 +72,7 @@ time terraform apply --auto-approve                                             
 cd ~/Azure_SAP_Automated_Deployment/sap-hana
 git checkout beta/v1.0
 git rev-parse HEAD
-#eccdcdb8d44fa1f77572e420ce27abac199245f4
-mv deploy/terraform/terraform-units/modules/sap_system/common_infrastructure/keyvault.tf \
-   deploy/terraform/terraform-units/modules/sap_system/common_infrastructure/keyvault.txt
-
+# 20200915-0934   58676615fcf5678a187d599629a9c7c6b121a966
 
 #---------------------------------------+---------------------------------------8
 
@@ -124,7 +120,7 @@ egrep -wi 'resource_group_name|storage_account_name|container_name' terraform.tf
 # terraform {
 #   backend azurerm {
 #     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate1f83"
+#     storage_account_name  = "npeus2tfstate6f2d"
 #     container_name        = "saplibrary"
 #     key                   = "NP-EUS2-SAP_LIBRARY.terraform.tfstate"
 #   }
@@ -134,7 +130,7 @@ egrep -wi 'resource_group_name|storage_account_name|container_name' terraform.tf
 
 terraform init                                                                       \
                --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"            \
-               --backend-config "storage_account_name=npeus2tfstate1f83"             \
+               --backend-config "storage_account_name=npeus2tfstate6f2d"             \
                --backend-config "container_name=tfstate"                             \
                --backend-config "key=NP-EUS2-SAP_LIBRARY.terraform.tfstate"          \
                ../../../sap-hana/deploy/terraform/run/sap_deployer/
@@ -169,7 +165,7 @@ egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LI
 # terraform {
 #   backend azurerm {
 #     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate1f83"
+#     storage_account_name  = "npeus2tfstate6f2d"
 #     container_name        = "tfstate"
 #     key                   = "NP-EUS2-DEP00-INFRASTRUCTURE.terraform.tfstate"
 #   }
@@ -179,20 +175,24 @@ egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LI
 
 terraform init                                                                       \
                --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"            \
-               --backend-config "storage_account_name=npeus2tfstate1f83"             \
+               --backend-config "storage_account_name=npeus2tfstate6f2d"             \
                --backend-config "container_name=tfstate"                             \
                --backend-config "key=NP-EUS2-DEP00-INFRASTRUCTURE.terraform.tfstate" \
                ../../../sap-hana/deploy/terraform/run/sap_deployer/
 
+
 rm terraform.tfstate*
+
 
 terraform plan                                                                       \
                 --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                         \
                 ../../../sap-hana/deploy/terraform/run/sap_deployer/
 
+
 time terraform apply --auto-approve                                                  \
                      --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                    \
                      ../../../sap-hana/deploy/terraform/run/sap_deployer/
+
 
 # Run Time < 1m
 
@@ -208,12 +208,12 @@ time terraform apply --auto-approve                                             
 
 mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/SAP_LANDSCAPE/NP-EUS2-SAP0-INFRASTRUCTURE; cd $_
 cp ../../LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE/sshkey* .
-egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LIBRARY/NP-EUS2-SAP_LIBRARY/.terraform/terraform.tfstate
+
 # cat <<EOF > backend.tf
 # terraform {
 #   backend azurerm {
 #     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate1f83"
+#     storage_account_name  = "npeus2tfstate6f2d"
 #     container_name        = "tfstate"
 #     key                   = "NP-EUS2-SAP0-INFRASTRUCTURE.terraform.tfstate"
 #   }
@@ -225,18 +225,21 @@ vi NP-EUS2-SAP0-INFRASTRUCTURE.json
 
 terraform init                                                                       \
                 --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"           \
-                --backend-config "storage_account_name=npeus2tfstate1f83"            \
+                --backend-config "storage_account_name=npeus2tfstate6f2d"            \
                 --backend-config "container_name=tfstate"                            \
                 --backend-config "key=NP-EUS2-SAP0-INFRASTRUCTURE.terraform.tfstate" \
                 ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 terraform plan                                                                       \
                 --var-file=NP-EUS2-SAP0-INFRASTRUCTURE.json                          \
                 ../../../sap-hana/deploy/terraform/run/sap_system/
 
+
 time terraform apply --auto-approve                                                  \
                      --var-file=NP-EUS2-SAP0-INFRASTRUCTURE.json                     \
                      ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 # Run Time < 1m
 
@@ -253,12 +256,12 @@ time terraform apply --auto-approve                                             
 
 mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/SAP_SYSTEM/NP-EUS2-SAP0-X00; cd $_
 cp ../../LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE/sshkey* .
-egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LIBRARY/NP-EUS2-SAP_LIBRARY/.terraform/terraform.tfstate
+
 # cat <<EOF > backend.tf
 # terraform {
 #   backend azurerm {
 #     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate1f83"
+#     storage_account_name  = "npeus2tfstate6f2d"
 #     container_name        = "tfstate"
 #     key                   = "NP-EUS2-SAP0-X00.terraform.tfstate"
 #   }
@@ -267,20 +270,37 @@ egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LI
 
 vi NP-EUS2-SAP0-X00.json
 
+
+cat <<EOF > backend
+resource_group_name   = "NP-EUS2-SAP_LIBRARY"
+storage_account_name  = "npeus2tfstate6f2d"
+container_name        = "tfstate"
+key                   = "NP-EUS2-SAP0-X00.terraform.tfstate"
+EOF
+
+
 terraform init                                                                       \
-                --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"           \
-                --backend-config "storage_account_name=npeus2tfstate1f83"            \
-                --backend-config "container_name=tfstate"                            \
-                --backend-config "key=NP-EUS2-SAP0-X00.terraform.tfstate"            \
+                --backend-config backend                                             \
                 ../../../sap-hana/deploy/terraform/run/sap_system/
+
+
+# terraform init                                                                       \
+#                 --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"           \
+#                 --backend-config "storage_account_name=npeus2tfstate6f2d"            \
+#                 --backend-config "container_name=tfstate"                            \
+#                 --backend-config "key=NP-EUS2-SAP0-X00.terraform.tfstate"            \
+#                 ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 terraform plan                                                                       \
                 --var-file=NP-EUS2-SAP0-X00.json                                     \
                 ../../../sap-hana/deploy/terraform/run/sap_system/
 
+
 time terraform apply --auto-approve                                                  \
                      --var-file=NP-EUS2-SAP0-X00.json                                \
                      ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 # Run Time ~ 10m
 
@@ -295,34 +315,33 @@ time terraform apply --auto-approve                                             
 
 mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/SAP_SYSTEM/NP-EUS2-SAP0-X01; cd $_
 cp ../../LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE/sshkey* .
-egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LIBRARY/NP-EUS2-SAP_LIBRARY/.terraform/terraform.tfstate
-# cat <<EOF > backend.tf
-# terraform {
-#   backend azurerm {
-#     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate1f83"
-#     container_name        = "tfstate"
-#     key                   = "NP-EUS2-SAP0-X01.terraform.tfstate"
-#   }
-# }
-# EOF
+
 
 vi NP-EUS2-SAP0-X01.json
 
+
+cat <<EOF > backend
+resource_group_name   = "NP-EUS2-SAP_LIBRARY"
+storage_account_name  = "npeus2tfstate6f2d"
+container_name        = "tfstate"
+key                   = "NP-EUS2-SAP0-X01.terraform.tfstate"
+EOF
+
+
 terraform init                                                                       \
-                --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"           \
-                --backend-config "storage_account_name=npeus2tfstate1f83"            \
-                --backend-config "container_name=tfstate"                            \
-                --backend-config "key=NP-EUS2-SAP0-X01.terraform.tfstate"            \
+                --backend-config backend                                             \
                 ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 terraform plan                                                                       \
                 --var-file=NP-EUS2-SAP0-X01.json                                     \
                 ../../../sap-hana/deploy/terraform/run/sap_system/
 
+
 time terraform apply --auto-approve                                                  \
                      --var-file=NP-EUS2-SAP0-X01.json                                \
                      ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 # Run Time ~ 10m
 
@@ -337,33 +356,33 @@ time terraform apply --auto-approve                                             
 
 mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/SAP_SYSTEM/NP-EUS2-SAP0-X02; cd $_
 cp ../../LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE/sshkey* .
-egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LIBRARY/NP-EUS2-SAP_LIBRARY/.terraform/terraform.tfstate
-# cat <<EOF > backend.tf
-# terraform {
-#   backend azurerm {
-#     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate1f83"
-#     container_name        = "tfstate"
-#     key                   = "NP-EUS2-SAP0-X02.terraform.tfstate"
-#   }
-# }
-# EOF
+
 
 vi NP-EUS2-SAP0-X02.json
 
-terraform init    --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"         \
-                  --backend-config "storage_account_name=npeus2tfstate1f83"          \
-                  --backend-config "container_name=tfstate"                          \
-                  --backend-config "key=NP-EUS2-SAP0-X02.terraform.tfstate"          \
-                  ../../../sap-hana/deploy/terraform/run/sap_system/
+
+cat <<EOF > backend
+resource_group_name   = "NP-EUS2-SAP_LIBRARY"
+storage_account_name  = "npeus2tfstate6f2d"
+container_name        = "tfstate"
+key                   = "NP-EUS2-SAP0-X02.terraform.tfstate"
+EOF
+
+
+terraform init                                                                       \
+                --backend-config backend                                             \
+                ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 terraform plan                                                                       \
                   --var-file=NP-EUS2-SAP0-X02.json                                   \
                   ../../../sap-hana/deploy/terraform/run/sap_system/
 
+
 time terraform apply --auto-approve                                                  \
                      --var-file=NP-EUS2-SAP0-X02.json                                \
                      ../../../sap-hana/deploy/terraform/run/sap_system/
+
 
 # Run Time < 1m
 
