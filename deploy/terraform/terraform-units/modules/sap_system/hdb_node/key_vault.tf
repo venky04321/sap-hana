@@ -170,3 +170,36 @@ resource "azurerm_key_vault_secret" "ha_cluster" {
   value        = local.ha_cluster_password
   key_vault_id = azurerm_key_vault.kv_user[0].id
 }
+
+// Store SPN of Azure Fence Agent for Hana Database in KV
+resource "azurerm_key_vault_secret" "fence_agent_subscription_id" {
+  count        = local.enable_fence_agent ? 1 : 0
+  depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
+  name         = format("%s-SAP_HANA_FENCING_AGENT_SUBSCRIPTION_ID", local.prefix)
+  value        = local.fence_agent_subscription_id
+  key_vault_id = azurerm_key_vault.kv_user.id
+}
+
+resource "azurerm_key_vault_secret" "fence_agent_tenant_id" {
+  count        = local.enable_fence_agent ? 1 : 0
+  depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
+  name         = format("%s-SAP_HANA_FENCING_AGENT_TENANT_ID", local.prefix)
+  value        = local.fence_agent_tenant_id
+  key_vault_id = azurerm_key_vault.kv_user.id
+}
+
+resource "azurerm_key_vault_secret" "fence_agent_client_id" {
+  count        = local.enable_fence_agent ? 1 : 0
+  depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
+  name         = format("%s-SAP_HANA_FENCING_AGENT_CLIENT_ID", local.prefix)
+  value        = local.fence_agent_client_id
+  key_vault_id = azurerm_key_vault.kv_user.id
+}
+
+resource "azurerm_key_vault_secret" "fence_agent_client_secret" {
+  count        = local.enable_fence_agent ? 1 : 0
+  depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
+  name         = format("%s-SAP_HANA_FENCING_AGENT_CLIENT_SECRET", local.prefix)
+  value        = local.fence_agent_client_secret
+  key_vault_id = azurerm_key_vault.kv_user.id
+}

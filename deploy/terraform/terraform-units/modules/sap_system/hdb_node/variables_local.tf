@@ -95,6 +95,13 @@ locals {
   enable_auth_password = local.enable_deployment && local.sid_auth_type == "password"
   sid_auth_username    = try(local.hdb.authentication.username, "azureadm")
   sid_auth_password    = local.enable_auth_password ? try(local.hdb.authentication.password, random_password.password[0].result) : null
+  
+  // SPN of Azure Fence Agent for Hana Database
+  enable_fence_agent = local.enable_deployment && try(local.hdb.fence_agent, null) != null
+  fence_agent_subscription_id = local.enable_fence_agent ? local.hdb.fence_agent.subscription_id : null
+  fence_agent_tenant_id = local.enable_fence_agent ? local.hdb.fence_agent.tenat_id : null
+  fence_agent_client_id = local.enable_fence_agent ? local.hdb.fence_agent.client_id : null
+  fence_agent_client_secret = local.enable_fence_agent ? local.hdb.fence_agent.client_secret : null
 
   # SAP vnet
   var_infra       = try(var.infrastructure, {})
