@@ -171,8 +171,8 @@ locals {
   xsa_admin_password     = try(local.hdb_cred.xsa_admin_password, "Manager1")
   cockpit_admin_password = try(local.hdb_cred.cockpit_admin_password, "Manager1")
   ha_cluster_password    = try(local.hdb_cred.ha_cluster_password, "Manager1")
-  db_systemdb_password   = try(local.hdb_cred.db_systemdb_password, random_password.credentials[0].result)
   /*
+  db_systemdb_password   = try(local.hdb_cred.db_systemdb_password, random_password.credentials[0].result)
   os_sidadm_password     = try(local.hdb_cred.os_sidadm_password, random_password.credentials[1].result)
   os_sapadm_password     = try(local.hdb_cred.os_sapadm_password, random_password.credentials[2].result)
   xsa_admin_password     = try(local.hdb_cred.xsa_admin_password, random_password.credentials[3].result)
