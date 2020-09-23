@@ -43,10 +43,17 @@ resource "local_file" "output-json" {
           high_availability = database.high_availability,
           instance          = database.instance,
           authentication    = database.authentication,
-          credentials       = database.credentials,
-          components        = database.components,
-          xsa               = database.xsa,
-          shine             = database.shine,
+          credentials = {
+            db_systemdb_password   = var.credentials[0].result,
+            os_sidadm_password     = var.credentials[1].result,
+            os_sapadm_password     = var.credentials[2].result,
+            xsa_admin_password     = var.credentials[3].result,
+            cockpit_admin_password = var.credentials[4].result,
+            ha_cluster_password    = var.credentials[5].result
+          },
+          components = database.components,
+          xsa        = database.xsa,
+          shine      = database.shine,
           nodes = [for ip-dbnode-admin in local.ips-dbnodes-admin : {
             // Hostname is required for Ansible, therefore set dbname from resource name to hostname
             dbname       = replace(local.hdb_vms[index(local.ips-dbnodes-admin, ip-dbnode-admin)].name, "_", "")

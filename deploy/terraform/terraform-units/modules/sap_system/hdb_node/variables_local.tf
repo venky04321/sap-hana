@@ -218,15 +218,6 @@ locals {
       instance_number = local.hdb_nr
       }
     },
-    { credentials = {
-      db_systemdb_password   = try(local.hdb_cred.db_systemdb_password, random_password.credentials[0].result),
-      os_sidadm_password     = local.os_sidadm_password,
-      os_sapadm_password     = local.os_sapadm_password,
-      xsa_admin_password     = local.xsa_admin_password,
-      cockpit_admin_password = local.cockpit_admin_password,
-      ha_cluster_password    = local.ha_cluster_password
-      }
-    },
     { components = local.components },
     { xsa = local.xsa },
     { shine = local.shine },
