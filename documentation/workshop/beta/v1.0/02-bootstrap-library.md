@@ -1,54 +1,92 @@
-#        1         2         3         4         5         6         7         8
-#2345678901234567890123456789012345678901234567890123456789012345678901234567890
-#--------------------------------------+---------------------------------------8
-#                                                                              |
-#                            BOOTSTRAP - SAP_LIBRARY                           |
-#                                                                              |
-#--------------------------------------+---------------------------------------8
+### <img src="../../../../documentation/assets/UnicornSAPBlack256x256.png" width="64px"> SAP Automation > V1.x.x <!-- omit in toc -->
+# Bootstrap - SAP Library <!-- omit in toc -->
 
-# Duration of Task      : 5 minutes
+Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_apis/build/status/Azure.sap-hana?branchName=master&api-version=5.1-preview.1)](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_build/latest?definitionId=6&branchName=master)
 
-# Prepare
+<br>
 
-cd ~/Azure_SAP_Automated_Deployment/sap-hana
-#git checkout v1.0-beta
-git checkout kimforss-naming-module-anydb
-git rev-parse HEAD
-#eccdcdb8d44fa1f77572e420ce27abac199245f4
-mv deploy/terraform/terraform-units/modules/sap_system/common_infrastructure/keyvault.tf \
-   deploy/terraform/terraform-units/modules/sap_system/common_infrastructure/keyvault.txt
+## Table of contents <!-- omit in toc -->
 
+- [Overview](#overview)
+- [Procedure](#procedure)
 
-#---------------------------------------+---------------------------------------8
+<br>
 
-mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/SAP_LIBRARY/NP-EUS2-SAP_LIBRARY; cd $_
+## Overview
 
-# cat <<EOF > backend.tf
-# terraform {
-#   backend "local" {
-#     path      = null
-#     workspace = null
-#   }
-# }
-# EOF
+|                  |              |
+| ---------------- | ------------ |
+| Duration of Task | `5 minutes`  |
+| Steps            | `5`          |
+| Runtime          | `1 minutes`  |
 
-vi NP-EUS2-SAP_LIBRARY.json
+---
 
+<br/><br/>
 
-terraform init  ../../../sap-hana/deploy/terraform/bootstrap/sap_library/
+## Procedure
 
-terraform plan                                                                  \
-                --var-file=NP-EUS2-SAP_LIBRARY.json                             \
-                ../../../sap-hana/deploy/terraform/bootstrap/sap_library
+<br/>
 
-time terraform apply                                                                 \
-                     --auto-approve                                                  \
-                     --var-file=NP-EUS2-SAP_LIBRARY.json                             \
-                     ../../../sap-hana/deploy/terraform/bootstrap/sap_library/
+1. Repository
 
-# Run Time < 1m
+    1. Checkout Branch
+        ```bash
+        cd  ~/Azure_SAP_Automated_Deployment/sap-hana
+        git checkout beta/v1.0
+        ```
 
-egrep -wi 'resource_group_name|storage_account_name|container_name' terraform.tfstate
+    2. Verify Branch is at expected Revision: `58676615fcf5678a187d599629a9c7c6b121a966`
+        ```bash
+        git rev-parse HEAD
+        ```
 
+<br>
 
+2. Create Working Directory.
+    ```bash
+    mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/SAP_LIBRARY/NP-EUS2-SAP_LIBRARY; cd $_
+    ```
 
+<br>
+
+3. Create input parameter [JSON](templates/NP-EUS2-SAP_LIBRARY.json)
+    ```bash
+    vi NP-EUS2-SAP_LIBRARY.json
+    ```
+
+<br>
+
+4. Terraform
+    1. Initialization
+       ```bash
+       terraform init  ../../../sap-hana/deploy/terraform/bootstrap/sap_library/
+       ```
+
+    2. Plan
+       ```bash
+       terraform plan                                                                  \
+                       --var-file=NP-EUS2-SAP_LIBRARY.json                             \
+                       ../../../sap-hana/deploy/terraform/bootstrap/sap_library
+       ```
+
+    3. Apply
+       <br/>
+       *This step deploys the resources*
+       ```bash
+       terraform apply                                                                 \
+                       --auto-approve                                                  \
+                       --var-file=NP-EUS2-SAP_LIBRARY.json                             \
+                       ../../../sap-hana/deploy/terraform/bootstrap/sap_library/
+       ```
+
+<br/>
+
+5. Extract Storage Account name
+   ```bash
+   egrep -wi 'storage_account_name' terraform.tfstate | sed -e 's/^[ \t]*//' | grep -m 1 -i tfstate
+   ```
+
+<br/><br/><br/><br/>
+
+# Next: [Reinitialize](03-reinitialize.md) <!-- omit in toc -->

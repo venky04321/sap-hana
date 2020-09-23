@@ -1,35 +1,39 @@
-### <img src="../../../documentation/assets/UnicornSAPBlack256x256.png" width="64px"> SAP Automation > V1.x.x <!-- omit in toc -->
+### <img src="../../../../documentation/assets/UnicornSAPBlack256x256.png" width="64px"> SAP Automation > V1.x.x <!-- omit in toc -->
 # Bootstrapping the Deployer <!-- omit in toc -->
 
 Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_apis/build/status/Azure.sap-hana?branchName=master&api-version=5.1-preview.1)](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_build/latest?definitionId=6&branchName=master)
 
-<br>
+<br/>
 
 ## Table of contents <!-- omit in toc -->
 
-- [Deleting the Deployment](#deleting-the-deployment)
+- [Overview](#overview)
+- [Procedure](#procedure)
 
-<br>
+<br/>
 
-## BOOTSTRAP - DEPLOYER
+## Overview
 
-|                  |             |
-| ---------------- | ----------- |
-| Duration of Task | `12 minutes`|
-| Steps            | `12`        |
-| Runtime          | `5 minutes`          |
+|                  |              |
+| ---------------- | ------------ |
+| Duration of Task | `12 minutes` |
+| Steps            | `10`         |
+| Runtime          | `5 minutes`  |
 
 ---
 
+<br/><br/>
+
 ## Procedure
 
-<br>
+<br/>
 
 1. Cloud Shell
    1. Log on to the [Azure Portal](https://portal.azure.com).
-   2. Open the cloud shell. [GRAPHIC]
+   2. Open the cloud shell.
+      <br/>![Cloud Shell](assets/CloudShell1.png)
 
-<br>
+<br/>
 
 2. Ensure that you are authenticated with the correct subscription.
     ```bash
@@ -44,7 +48,7 @@ Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azur
     az account set  --subscription XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
     ```
 
-<br>
+<br/>
 
 3. Install the correct version of Terraform.
     ```bash
@@ -54,7 +58,7 @@ Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azur
     unzip terraform_0.12.29_linux_amd64.zip
     ```
 
-<br>
+<br/>
 
 4. Repository
    1. Clone the Repository and Checkout the branch.
@@ -74,14 +78,14 @@ Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azur
         git rev-parse HEAD
         ```
 
-<br>
+<br/>
 
 5. Create Working Directory.
     ```bash
     mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE; cd $_
     ```
 
-<br>
+<br/>
 
 6. SSH Keys: Chose One
 
@@ -98,42 +102,53 @@ Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azur
     chmod 600 sshkey
     ```
 
-<br>
+<br/>
 
 7. Create input parameter [JSON](templates/NP-EUS2-DEP00-INFRASTRUCTURE.json)
     ```bash
     vi NP-EUS2-DEP00-INFRASTRUCTURE.json
     ```
 
-<br>
+<br/>
 
 8. Terraform
-   1. Initialization
+    1. Initialization
+       ```bash
+       terraform init  ../../../sap-hana/deploy/terraform/bootstrap/sap_deployer/
+       ```
 
-      ```bash
-      terraform init  ../../../sap-hana/deploy/terraform/bootstrap/sap_deployer/
-      ```
+    2. Plan
+       ```bash
+       terraform plan                                                              \
+                       --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                \
+                        ../../../sap-hana/deploy/terraform/bootstrap/sap_deployer/
+       ```
 
-   2. Plan
-      ```bash
-      terraform plan                                                              \
-                      --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                \
+    3. Apply
+       <br/>
+       *This step deploys the resources*
+       ```bash
+       terraform apply --auto-approve                                              \
+                       --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                \
                        ../../../sap-hana/deploy/terraform/bootstrap/sap_deployer/
-      ```
+       ```
 
-   3. Apply
-      <br/>
-      *This step deploys the resources*
-      ```bash
-      terraform apply --auto-approve                                              \
-                      --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                \
-                      ../../../sap-hana/deploy/terraform/bootstrap/sap_deployer/
-      ```
+<br/>
 
-<br>
+9. Post Processing
+    1. Post Processing.
+       ```bash
+       ./post_deployment.sh
+       ```
+       <br/>
 
-1. Post Processing
-    ```bash
-    ./post_deployment.sh
-    ```
+    2. Note the IP address of the VM.
+       <br/>![IP Address](assets/CloudShell3.png)
+       <br/><br/>
 
+    3. Download the Private/Public Key Pair for use in your SSH Terminal Application
+       <br/>![Download File](assets/CloudShell2.png)
+       <br/><br/><br/><br/>
+
+
+# Next: [Bootstrap - Library](02-bootstrap-library.md) <!-- omit in toc -->

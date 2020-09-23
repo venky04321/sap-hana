@@ -8,10 +8,6 @@
 
 # Duration of Task      : 12 minutes
 
-az login
-az account list --output=table | grep -i true
-#az account set --subscription XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX or "Name"
-
 mkdir ~/bin; cd $_
 alias terraform=~/bin/terraform
 wget https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip
@@ -31,6 +27,18 @@ mkdir -p ~/Azure_SAP_Automated_Deployment/WORKSPACES/LOCAL/NP-EUS2-DEP00-INFRAST
 mv ~/sshkey* .
 chmod 600 sshkey
 
+# cat <<EOF > backend.tf
+# terraform {
+#   backend "local" {
+#     path      = null
+#     workspace = null
+#   }
+# }
+# EOF
+
+az login
+az account list --output=table | grep -i true
+#az account set --subscription XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX or "Name"
 
 vi NP-EUS2-DEP00-INFRASTRUCTURE.json
 

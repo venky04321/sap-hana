@@ -1,93 +1,164 @@
-#        1         2         3         4         5         6         7         8
-#2345678901234567890123456789012345678901234567890123456789012345678901234567890
-#--------------------------------------+---------------------------------------8
-#                                                                              |
-#                         REINITIALIZE - SAP_LIBRARY                           |
-#                                                                              |
-#--------------------------------------+---------------------------------------8
+### <img src="../../../../documentation/assets/UnicornSAPBlack256x256.png" width="64px"> SAP Automation > V1.x.x <!-- omit in toc -->
+# Bootstrap - Reinitialization <!-- omit in toc -->
 
-# Duration of Task      : 3 minutes
+Master Branch's status: [![Build Status](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_apis/build/status/Azure.sap-hana?branchName=master&api-version=5.1-preview.1)](https://dev.azure.com/azuresaphana/Azure-SAP-HANA/_build/latest?definitionId=6&branchName=master)
+
+<br>
+
+## Table of contents <!-- omit in toc -->
+
+- [Overview](#overview)
+- [Procedure](#procedure)
+  - [SAP Library](#sap-library)
+  - [Deployer](#deployer)
+
+<br>
+
+## Overview
+
+|                  |              |
+| ---------------- | ------------ |
+| Duration of Task | `3 minutes`  |
+| Steps            | `5`          |
+| Runtime          | `1 minutes`  |
+
+---
+
+<br/><br/>
+
+## Procedure
+
+### SAP Library
+
+<br/>
+
+1. Change to Working Directory.
+    ```bash
+    cd ~/Azure_SAP_Automated_Deployment/WORKSPACES/SAP_LIBRARY/NP-EUS2-SAP_LIBRARY
+    ```
+
+<br/>
+
+2. Extract Storage Account name
+   ```bash
+   egrep -wi 'storage_account_name' terraform.tfstate | sed -e 's/^[ \t]*//' | grep -m 1 -i tfstate
+   ```
+
+<br/>
+
+3. Create *backend* parameter file.
+    ```bash
+    cat <<EOF > backend
+    resource_group_name   = "NP-EUS2-SAP_LIBRARY"
+    storage_account_name  = "npeus2tfstatec680"
+    container_name        = "tfstate"
+    key                   = "NP-EUS2-SAP_LIBRARY.terraform.tfstate"
+    EOF
+    ```
+
+<br/>
+
+4. Terraform
+    1. Initialization
+       ```bash
+       terraform init  --backend-config backend                                         \
+                       ../../../sap-hana/deploy/terraform/run/sap_library/
+       ```
+       
+       Respond ***yes*** to the following:
+       <br/><br/>![IMAGE](assets/Reinitialize1.png)
+
+       ...And remove the local State File.
+
+       ```bash
+       rm terraform.tfstate*
+       ```
+
+    2. Plan
+       ```bash
+       terraform plan  --var-file=NP-EUS2-SAP_LIBRARY.json                             \
+                       ../../../sap-hana/deploy/terraform/run/sap_library/
+       ```
+
+    3. Apply
+       <br/>
+       ```bash
+       terraform apply --auto-approve                                                  \
+                       --var-file=NP-EUS2-SAP_LIBRARY.json                             \
+                       ../../../sap-hana/deploy/terraform/run/sap_library/
+       ```
+
+<br/><br/>
+
+---
+
+<br/><br/>
+
+### Deployer
+
+<br/>
+
+6. Change to Working Directory.
+    ```bash
+    cd ~/Azure_SAP_Automated_Deployment/WORKSPACES/LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE
+    ```
+
+<br/>
+
+7. Extract Storage Account name
+   ```bash
+   egrep -wi 'storage_account_name'                                       \
+     ../../SAP_LIBRARY/NP-EUS2-SAP_LIBRARY/.terraform/terraform.tfstate | \
+     sed -e 's/^[ \t]*//' | grep -m 1 -i tfstate
+   ```
+
+<br>
+
+8. Create *backend* parameter file.
+    ```bash
+    cat <<EOF > backend
+    resource_group_name   = "NP-EUS2-SAP_LIBRARY"
+    storage_account_name  = "npeus2tfstatec680"
+    container_name        = "tfstate"
+    key                   = "NP-EUS2-DEP00-INFRASTRUCTURE.terraform.tfstate"
+    EOF
+    ```
+
+<br>
+
+9. Terraform
+    1. Initialization
+       ```bash
+       terraform init  --backend-config backend                                         \
+                       ../../../sap-hana/deploy/terraform/run/sap_deployer/
+       ```
+       
+       Respond ***yes*** to the following:
+       <br/><br/>![IMAGE](assets/Reinitialize2.png)
+
+       ...And remove the local State File.
+
+       ```bash
+       rm terraform.tfstate*
+       ```
+
+    2. Plan
+       ```bash
+       terraform plan  --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                     \
+                       ../../../sap-hana/deploy/terraform/run/sap_deployer/
+       ```
+
+    3. Apply
+       <br/>
+       ```bash
+       terraform apply --auto-approve                                                  \
+                       --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                    \
+                       ../../../sap-hana/deploy/terraform/run/sap_deployer/
+       ```
+
+<br/>
 
 
-# cat <<EOF > backend.tf
-# terraform {
-#   backend azurerm {
-#     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate57ba"
-#     container_name        = "saplibrary"
-#     key                   = "NP-EUS2-SAP_LIBRARY.terraform.tfstate"
-#   }
-# }
-# EOF
+<br/><br/><br/><br/>
 
-
-terraform init                                                                             \
-               --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"                  \
-               --backend-config "storage_account_name=npeus2tfstate57ba"                   \
-               --backend-config "container_name=saplibrary"                                \
-               --backend-config "key=NP-EUS2-SAP_LIBRARY.terraform.tfstate"                \
-               ../../../sap-hana/deploy/terraform/run/sap_deployer/
-
-rm terraform.tfstate*
-
-terraform plan                                                                             \
-                --var-file=NP-EUS2-SAP_LIBRARY.json                                        \
-                ../../../sap-hana/deploy/terraform/run/sap_library 
-
-time terraform apply                                                                            \
-                     --auto-approve                                                             \
-                     --var-file=NP-EUS2-SAP_LIBRARY.json                                        \
-                     ../../../sap-hana/deploy/terraform/run/sap_library/
-
-# Run Time < 1m
-
-egrep -wi 'resource_group_name|storage_account_name|container_name' .terraform/terraform.tfstate
-
-
-
-#--------------------------------------+---------------------------------------8
-#                                                                              |
-#                            REINITIALIZE - DEP00                           |
-#                                                                              |
-#--------------------------------------+---------------------------------------8
-
-# Duration of Task      : 3 minutes
-
-cd ~/Azure_SAP_Automated_Deployment/WORKSPACES/LOCAL/NP-EUS2-DEP00-INFRASTRUCTURE
-egrep -wi 'resource_group_name|storage_account_name|container_name' ../../SAP_LIBRARY/NP-EUS2-SAP_LIBRARY/.terraform/terraform.tfstate
-
-# cat <<EOF > backend.tf
-# terraform {
-#   backend azurerm {
-#     resource_group_name   = "NP-EUS2-SAP_LIBRARY"
-#     storage_account_name  = "npeus2tfstate57ba"
-#     container_name        = "saplibrary"
-#     key                   = "NP-EUS2-DEP00-INFRASTRUCTURE.terraform.tfstate"
-#   }
-# }
-# EOF
-
-
-terraform init                                                                           \
-               --backend-config "resource_group_name=NP-EUS2-SAP_LIBRARY"                \
-               --backend-config "storage_account_name=npeus2tfstate57ba"                 \
-               --backend-config "container_name=saplibrary"                              \
-               --backend-config "key=NP-EUS2-DEP00-INFRASTRUCTURE.terraform.tfstate"  \
-               ../../../sap-hana/deploy/terraform/run/sap_deployer/
-
-rm terraform.tfstate*
-
-terraform plan                                                                           \
-                --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                          \
-                ../../../sap-hana/deploy/terraform/run/sap_deployer/
-
-time terraform apply --auto-approve                                                           \
-                     --var-file=NP-EUS2-DEP00-INFRASTRUCTURE.json                          \
-                     ../../../sap-hana/deploy/terraform/run/sap_deployer/
-
-# Run Time < 1m
-
-egrep -wi 'resource_group_name|storage_account_name|container_name' .terraform/terraform.tfstate
-
-
-
+# Next: [SAP Workload VNET](04-workload-vnet.md) <!-- omit in toc -->
