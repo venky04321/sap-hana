@@ -73,7 +73,7 @@ resource "azurerm_key_vault_access_policy" "kv_user_portal" {
 }
 
 // Generate random password if password is set as authentication type and user doesn't specify a password
-resource "random_password" "password" {
+resource "random_string" "password" {
   count = (
     local.enable_auth_password
   && try(local.authentication.password, null) == null) ? 1 : 0
