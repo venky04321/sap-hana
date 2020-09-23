@@ -160,5 +160,7 @@ module "output_files" {
   any-database-info            = module.anydb_node.any-database-info
   anydb-loadbalancers          = module.anydb_node.anydb-loadbalancers
   deployers                    = module.deployer.import_deployer
-  random-id        = module.common_infrastructure.random-id
+  random-id                    = module.common_infrastructure.random-id
+  password                     = module.hdb_node.password
+  credentials                  = module.hdb_node.credentials
 }
