@@ -101,7 +101,7 @@ resource "azurerm_key_vault_secret" "auth_password" {
   depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
   count        = local.enable_auth_password ? 1 : 0
   name         = format("%s-sid-auth-password", local.prefix)
-  value        = local.sid_auth_password
+  value        = try(local.hdb.authentication.password, random_password.password[0].result)
   key_vault_id = azurerm_key_vault.kv_user.id
 }
 
@@ -129,34 +129,34 @@ resource "azurerm_key_vault_secret" "db_systemdb" {
 resource "azurerm_key_vault_secret" "os_sidadm" {
   depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
   name         = format("%s-os-sidadm-password", local.prefix)
-  value        = local.os_sidadm_password
+  value        = try(local.hdb_cred.os_sidadm_password, random_password.credentials[1].result)
   key_vault_id = azurerm_key_vault.kv_user.id
 }
 
 resource "azurerm_key_vault_secret" "os_sapadm" {
   depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
   name         = format("%s-os-sapadm-password", local.prefix)
-  value        = local.os_sapadm_password
+  value        = try(local.hdb_cred.os_sapadm_password, random_password.credentials[2].result)
   key_vault_id = azurerm_key_vault.kv_user.id
 }
 
 resource "azurerm_key_vault_secret" "xsa_admin" {
   depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
   name         = format("%s-xsa-admin-password", local.prefix)
-  value        = local.xsa_admin_password
+  value        = try(local.hdb_cred.xsa_admin_password, random_password.credentials[3].result)
   key_vault_id = azurerm_key_vault.kv_user.id
 }
 
 resource "azurerm_key_vault_secret" "cockpit_admin" {
   depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
   name         = format("%s-cockpit-admin-password", local.prefix)
-  value        = local.cockpit_admin_password
+  value        = try(local.hdb_cred.cockpit_admin_password, random_password.credentials[4].result)
   key_vault_id = azurerm_key_vault.kv_user.id
 }
 
 resource "azurerm_key_vault_secret" "ha_cluster" {
   depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
   name         = format("%s-ha-cluster-password", local.prefix)
-  value        = local.ha_cluster_password
+  value        = try(local.hdb_cred.ha_cluster_password, random_password.credentials[5].result)
   key_vault_id = azurerm_key_vault.kv_user.id
 }
