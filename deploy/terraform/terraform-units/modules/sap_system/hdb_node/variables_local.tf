@@ -94,7 +94,7 @@ locals {
   sid_auth_type        = try(local.hdb.authentication.type, "key")
   enable_auth_password = local.enable_deployment && local.sid_auth_type == "password"
   sid_auth_username    = try(local.hdb.authentication.username, "azureadm")
-  sid_auth_password    = local.enable_auth_password ? try(local.hdb.authentication.password, "Manager1") : null
+  //sid_auth_password    = local.enable_auth_password ? try(local.hdb.authentication.password, "Manager1") : null
 
   # SAP vnet
   var_infra       = try(var.infrastructure, {})
@@ -156,8 +156,8 @@ locals {
   hdb_ha   = try(local.hdb.high_availability, false)
   hdb_auth = {
     "type"     = local.sid_auth_type,
-    "username" = local.sid_auth_username,
-  "password" = local.sid_auth_password }
+    "username" = local.sid_auth_username
+  }
 
   hdb_ins  = try(local.hdb.instance, {})
   hdb_sid  = try(local.hdb_ins.sid, local.sid) // HANA database sid from the Databases array for use as reference to LB/AS
@@ -165,13 +165,11 @@ locals {
   hdb_cred = try(local.hdb.credentials, {})
   /*
   db_systemdb_password   = try(local.hdb_cred.db_systemdb_password, "Manager1")
-  */
   os_sidadm_password     = try(local.hdb_cred.os_sidadm_password, "Manager1")
   os_sapadm_password     = try(local.hdb_cred.os_sapadm_password, "Manager1")
   xsa_admin_password     = try(local.hdb_cred.xsa_admin_password, "Manager1")
   cockpit_admin_password = try(local.hdb_cred.cockpit_admin_password, "Manager1")
   ha_cluster_password    = try(local.hdb_cred.ha_cluster_password, "Manager1")
-  /*
   db_systemdb_password   = try(local.hdb_cred.db_systemdb_password, random_password.credentials[0].result)
   os_sidadm_password     = try(local.hdb_cred.os_sidadm_password, random_password.credentials[1].result)
   os_sapadm_password     = try(local.hdb_cred.os_sapadm_password, random_password.credentials[2].result)

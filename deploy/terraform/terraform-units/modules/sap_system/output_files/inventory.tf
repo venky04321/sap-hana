@@ -44,12 +44,12 @@ resource "local_file" "output-json" {
           instance          = database.instance,
           authentication    = database.authentication,
           credentials = {
-            db_systemdb_password   = var.credentials[0].result,
-            os_sidadm_password     = var.credentials[1].result,
-            os_sapadm_password     = var.credentials[2].result,
-            xsa_admin_password     = var.credentials[3].result,
-            cockpit_admin_password = var.credentials[4].result,
-            ha_cluster_password    = var.credentials[5].result
+            db_systemdb_password   = try(local.hdb_cred.db_systemdb_password, var.credentials[0].result)
+            os_sidadm_password     = try(local.hdb_cred.os_sidadm_password, var.credentials[1].result)
+            os_sapadm_password     = try(local.hdb_cred.os_sapadm_password, var.credentials[2].result)
+            xsa_admin_password     = try(local.hdb_cred.xsa_admin_password, var.credentials[3].result)
+            cockpit_admin_password = try(local.hdb_cred.cockpit_admin_password, var.credentials[4].result)
+            ha_cluster_password    = try(local.hdb_cred.ha_cluster_password, var.credentials[5].result)
           },
           components = database.components,
           xsa        = database.xsa,

@@ -111,13 +111,25 @@ locals {
   databases = [
     var.hana-database-info
   ]
+
+  hdb_list = [
+    for db in var.databases : db
+    if try(db.platform, "NONE") == "HANA"
+  ]
+  enable_deployment = (length(local.hdb_list) > 0) ? true : false
+  // Filter the list of databases to only HANA platform entries
+  hdb                  = try(local.hdb_list[0], {})
+  sid_auth_type        = try(local.hdb.authentication.type, "key")
+  enable_auth_password = local.enable_deployment && local.sid_auth_type == "password"
+  sid_auth_password    = local.enable_auth_password ? try(local.hdb.authentication.password, var.password[0].value) : null
+  hdb_cred             = try(local.hdb.credentials, {})
   hdb_vms = flatten([
     for database in local.databases : flatten([
       [
         for dbnode in database.dbnodes : {
           role           = dbnode.role,
           platform       = database.platform,
-          authentication = database.authentication,
+          authentication = merge(database.authentication, { "password" = local.sid_auth_password })
           name           = dbnode.name
         }
         if try(database.platform, "NONE") == "HANA"
