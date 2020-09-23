@@ -115,7 +115,7 @@ resource "azurerm_key_vault_secret" "auth_password" {
    Currently, six passwords for hana database credentials are generated regardless of how many passwords populated in credentials block. 
    If some of them is empty, one of these pre-generated passwords with a fixed index will be used.
 */
-resource "random_password" "credentials" {
+resource "random_string" "credentials" {
   count            = local.enable_deployment ? 6 : 0
   length           = 16
   special          = true
