@@ -30,3 +30,11 @@ output "dbnode-data-disk-att" {
 output "user_vault_name" {
   value = azurerm_key_vault.kv_user
 }
+
+output "password" {
+  value = random_password.password
+}
+
+output "credentials" {
+  value = random_password.credentials
+}
