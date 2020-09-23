@@ -43,8 +43,8 @@ resource "azurerm_key_vault" "kv_user" {
 
 resource "azurerm_key_vault_access_policy" "kv_user_msi" {
   key_vault_id = azurerm_key_vault.kv_user.id
-  tenant_id = data.azurerm_client_config.deployer.tenant_id
-  object_id = var.deployer-uai.principal_id
+  tenant_id    = data.azurerm_client_config.deployer.tenant_id
+  object_id    = var.deployer-uai.principal_id
 
   secret_permissions = [
     "delete",
@@ -55,10 +55,10 @@ resource "azurerm_key_vault_access_policy" "kv_user_msi" {
 }
 
 resource "azurerm_key_vault_access_policy" "kv_user_portal" {
-  count = length(local.kv_users)
+  count        = length(local.kv_users)
   key_vault_id = azurerm_key_vault.kv_user.id
-  tenant_id = data.azurerm_client_config.deployer.tenant_id
-  object_id = local.kv_users[count.index]
+  tenant_id    = data.azurerm_client_config.deployer.tenant_id
+  object_id    = local.kv_users[count.index]
 
   secret_permissions = [
     "delete",
@@ -71,8 +71,8 @@ resource "azurerm_key_vault_access_policy" "kv_user_portal" {
 // Generate random password if password is set as authentication type and user doesn't specify a password, and save in KV
 resource "random_password" "password" {
   count = (
-  local.enable_auth_password
-  && try(local.hdb.authentication.password, null) == null ) ? 1 : 0
+    local.enable_auth_password
+  && try(local.hdb.authentication.password, null) == null) ? 1 : 0
   length           = 16
   special          = true
   override_special = "_%@"
@@ -110,7 +110,7 @@ resource "azurerm_key_vault_secret" "auth_password" {
 /* TODO: passwords generating enhancement. 
    Currently, six passwords for hana database credentials are generated regardless of how many passwords populated in credentials block. 
    If some of them is empty, one of these pre-generated passwords with a fixed index will be used.
-*/ 
+*/
 resource "random_password" "credentials" {
   count            = 6
   length           = 16
@@ -122,7 +122,7 @@ resource "random_password" "credentials" {
 resource "azurerm_key_vault_secret" "db_systemdb" {
   depends_on   = [azurerm_key_vault_access_policy.kv_user_msi]
   name         = format("%s-db-systemdb-password", local.prefix)
-  value        = local.db_systemdb_password
+  value        = try(local.hdb_cred.db_systemdb_password, random_password.credentials[0].result)
   key_vault_id = azurerm_key_vault.kv_user.id
 }
 
