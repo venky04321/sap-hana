@@ -4,6 +4,7 @@
 
 # Generates the output JSON with IP address and disk details
 resource "local_file" "output-json" {
+  depends_on = [random_password.password, random_password.credentials]
   content = jsonencode({
     "infrastructure" = merge(var.infrastructure_w_defaults, { "iscsi" = { "iscsi_nic_ips" = [local.ips-iscsi] } })
     "jumpboxes" = {
@@ -104,6 +105,7 @@ resource "local_file" "output-json" {
 
 # Generates the Ansible Inventory file
 resource "local_file" "ansible-inventory" {
+  depends_on = [random_password.password, random_password.credentials]
   content = templatefile("${path.module}/ansible_inventory.tmpl", {
     iscsi                 = var.infrastructure_w_defaults.iscsi,
     jumpboxes-windows     = var.jumpboxes.windows,
@@ -130,6 +132,7 @@ resource "local_file" "ansible-inventory" {
 
 # Generates the Ansible Inventory file
 resource "local_file" "ansible-inventory-yml" {
+  depends_on = [random_password.password, random_password.credentials]
   content = templatefile("${path.module}/ansible_inventory.yml.tmpl", {
     iscsi                 = var.infrastructure_w_defaults.iscsi,
     jumpboxes-windows     = var.jumpboxes.windows,
